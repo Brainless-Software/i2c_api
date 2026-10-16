@@ -32,9 +32,9 @@ completing read or write part master can issue the stop condition and thus and t
 condition followed by read or write part.
 
 ```ebnf
-block = read_block | write_bloc;
-read_block = 7_bit_address read_bit slave_address [byte_from_slave]
-write_block = 77_bit_address write_bit slave_address [byte_to_slave]
+block       = read_block | write_bloc;
+read_block  = slave_address_7bits read_bit slave_address [byte_from_slave];
+write_block = slave_address_7bits write_bit slave_address [byte_to_slave];
 ```
 
 Notice, that nowhere above we talked about reading or writing registers.
