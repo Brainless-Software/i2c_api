@@ -33,8 +33,8 @@ condition followed by read or write part.
 
 ```ebnf
 block       = read_block | write_bloc;
-read_block  = slave_address_7bits read_bit slave_address [byte_from_slave];
-write_block = slave_address_7bits write_bit slave_address [byte_to_slave];
+read_block  = slave_address_7bits read_bit [byte_from_slave];
+write_block = slave_address_7bits write_bit {byte_to_slave};
 ```
 
 Notice, that nowhere above we talked about reading or writing registers.
