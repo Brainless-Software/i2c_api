@@ -92,7 +92,7 @@ Note, that instance of `I2CMaster` is to be obtained from another library where 
 dongle. For the sake of flow though we simply write above `master = I2CMaster()` even
 though that is invalid since `I2CMaster` is an abstract class.
 
-Variable `results` is an instance `ExecResults` named tuple. Which for the above 
+Variable `results` is an instance of `ExecResults` named tuple. Which for the above 
 example you can access like so:
 
 ```python
@@ -105,10 +105,10 @@ match results:
 ```
 
 Calling `results.values()` returns list of `BitArray` where each element corresponds 
-to each appearance of `read($n_bytes)` call. In the above example we only one read operation, 
-hence if `result` is successful, then there is one element in the `.values()` list.
+to each appearance of `read($n_bytes)` call. In the above example we have only one read operation, 
+hence if `result` is successful, then there is just one element in the `.values()` list.
 
-To write in register we can construct transcation object like so
+To write into a register we can construct transaction object like so
 
 ```python
 from i2c_api import I2CTransactionBuilder
@@ -122,7 +122,7 @@ S().Address(auto).W().Data(0x07).Data(0x11).P()
 ```
 
 Notice that we did not pass slave address in the `address()` function call, hence in string above 
-it says `Address(auto)`. This allows us to assemble transaction without reference 
+it says `Address(auto)`. This allows us to assemble transactions without reference 
 to a particular slave device address. This means that this address would have to be supplied when 
 we execute this transaction.
 
@@ -131,8 +131,11 @@ results = write_reg_transaction.exec(master, 0x42)
 
 results = master.exec(write_reg_transaction, 0x42)
 ```
+
+Address passed to the `exec(...)` function will be applied only to the unfilled `address()` calls.
+
 Write transaction above does not have any read operation, hence we need to check only 
-if it was a success or not like so
+if it was a successful or not like so
 
 ```python
 _, is_success = write_reg_transaction.exec(master, 0x42)
