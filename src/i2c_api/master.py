@@ -3,10 +3,10 @@ from dataclasses import dataclass
 
 from bitstring import BitArray, Bits
 
-from i2c_api.commands import P
+from i2c_api.commands import Address, P
 from i2c_api.errors import I2CError
 from i2c_api.exec_results import ExecResults
-from i2c_api.language import I2CTransactionEnd
+from i2c_api.language import I2CTransaction
 from i2c_api.log import I2CTransactionElement
 from i2c_api.logger import I2CLogger
 
@@ -137,7 +137,7 @@ class I2CMaster(ABC):
         finally:
             self.logger().log_message(log_msg)
 
-    def exec(self, transaction: I2CTransactionEnd) -> ExecResults:
+    def exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
         """
         Executes I2C commands in a single transaction and returns a named tuple `ExecResults` where first value is list
         of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
@@ -145,15 +145,22 @@ class I2CMaster(ABC):
         between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
         from the slave.
         """
-        if not isinstance(transaction, I2CTransactionEnd):
+        if not isinstance(transaction, I2CTransaction):
             raise I2CError("transaction argument must be instance of I2CTransactionEnd")
         elif transaction._i2c._i2c_commands == [] or not isinstance(transaction._i2c._i2c_commands[-1], P):
             raise I2CError("Unable to execute incomplete transaction")
+        elif device_address == -1:
+            for c in transaction._i2c._i2c_commands:
+                if isinstance(c, Address) and c.address == -1:
+                    raise ValueError(
+                        "Some Address(...) commands are given without the address. "
+                        "Thus, argument `address` must be provided."
+                    )
         else:
-            return self._exec(transaction)
+            return self._exec(transaction, device_address)
 
     @abstractmethod
-    def _exec(self, transaction: I2CTransactionEnd) -> ExecResults:
+    def _exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
         pass
 
     def read_register(

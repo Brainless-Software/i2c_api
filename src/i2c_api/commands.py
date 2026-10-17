@@ -2,6 +2,9 @@ class Command:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}()"
 
+    def to_dict(self) -> dict[str, str]:
+        return {"cmd": self.__class__.__name__}
+
 
 class S(Command):
     pass
@@ -19,6 +22,9 @@ class Address(Command):
         else:
             return f"{self.__class__.__name__}(0x{self.address:02X})"
 
+    def to_dict(self) -> dict[str, str]:
+        return {"cmd": self.__class__.__name__, "address": f"{self.address}"}
+
 
 class Address10(Command):
     __match_args__ = ("address",)
@@ -31,6 +37,9 @@ class Address10(Command):
             return f"{self.__class__.__name__}(auto)"
         else:
             return f"{self.__class__.__name__}(0x{self.address:02X})"
+
+    def to_dict(self) -> dict[str, str]:
+        return {"cmd": self.__class__.__name__, "address": f"{self.address}"}
 
 
 class W(Command):
@@ -46,6 +55,9 @@ class Data(Command):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(0x{self.data:02X})"
 
+    def to_dict(self) -> dict[str, str]:
+        return {"cmd": self.__class__.__name__, "payload": f"{self.data}"}
+
 
 class Read(Command):
     __match_args__ = ("num_bytes",)
@@ -55,6 +67,9 @@ class Read(Command):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.num_bytes})"
+
+    def to_dict(self) -> dict[str, str]:
+        return {"cmd": self.__class__.__name__, "num_bytes": f"{self.num_bytes}"}
 
 
 class Sr(Command):
