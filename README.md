@@ -33,6 +33,8 @@ condition followed by read or write part.
 
 ```ebnf
 block       = read_block | write_bloc;
+read_bit    = 1;
+write_bit   = 0;
 read_block  = slave_address_7bits read_bit [byte_from_slave];
 write_block = slave_address_7bits write_bit {byte_to_slave};
 ```
