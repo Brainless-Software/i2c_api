@@ -90,7 +90,7 @@ results: ExecResults = read_reg_transaction.exec(master)
 
 Note, that instance of `I2CMaster` is to be obtained from another library where it is implemented for your specific 
 dongle. For the sake of flow though we simply write above `master = I2CMaster()` even
-though that is an invalid since `I2CMaster` is an abstract class.
+though that is invalid since `I2CMaster` is an abstract class.
 
 Variable `results` is an instance `ExecResults` named tuple. Which for the above 
 example you can access like so:
