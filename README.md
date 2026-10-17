@@ -251,7 +251,7 @@ data: Bits | None = i2c_master.write_register(0x42, register=0x7, data=0x11)
 ```
 
 It returns data that was written into a device (in this case 0x11) or None if transaction failed for any reason.
-Like with `read_register(...)` register address can be an int for ony byte long address or an instance
+Like with `read_register(...)` register address can be an int for one byte wide address or an instance
 of `RegisterAddress`. Like with `write(...)` function above, `data` can be an int for one byte, array of ints one
 for each byte or a string representing bit array and optional argument `num_bytes` will pad it the specific number of
 bytes or if not provided to the nearest number of bytes to fit payload in.
