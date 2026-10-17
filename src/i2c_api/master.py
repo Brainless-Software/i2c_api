@@ -21,6 +21,12 @@ class RegisterAddress:
     address: int
     bus_width_in_bytes: int
 
+    def __post_init__(self):
+        if self.address < 0 or self.address > (pow(2, self.bus_width_in_bytes * 8) - 1):
+            raise ValueError(
+                f"Invalid register address {self.address} as it does not fit within {self.bus_width_in_bytes} bytes"
+            )
+
 
 class I2CMaster(ABC):
     def __init__(self, logger: I2CLogger | None = None):
@@ -73,7 +79,8 @@ class I2CMaster(ABC):
         issue Stop condition and will release the clock line.
 
         :param address: i2c address of the target device
-        :param data: array of bits to send to the target device; if int or list[int], then these are assumed to be bytes
+        :param data: array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
+            If it is a string, then BitArray is constructed from that string and that is used as a payload.
         :param num_bytes: number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
             payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width.
         :return: True or False indicating if write succeeded, which is that client responded with ACK bits.
@@ -166,7 +173,7 @@ class I2CMaster(ABC):
     def read_register(
         self,
         address: int,
-        register: RegisterAddress,
+        register: RegisterAddress | int,
         num_bytes: int = 1,
         use_restart: bool = True,
     ) -> Bits | None:
@@ -179,22 +186,27 @@ class I2CMaster(ABC):
         them.
 
         :param address: i2c address of the target device
-        :param register: address of the register to read
+        :param register: address of the register to read; if int, then it is assumed that register address is one
+            byte wide and thus valid value for this field is from 0 to 255.
         :param num_bytes: number of bytes to read; this should match length of the register
         :param use_restart: True or False (default) indicating if we should try using I2C restart op between read and
-                write operations
+            write operations
         :return: None if at any point during these transactions client sends NACK or actual Bits holding response data
         """
         if address < 0:
             raise I2CError("Invalid i2c device address")
 
+        register_addr: RegisterAddress = (
+            RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register
+        )
+
         log_msg = []
         try:
             write_success = self._write(
                 address,
-                data=BitArray(f"uint:{8 * register.bus_width_in_bytes}={register.address}"),
+                data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}"),
                 log_msg=log_msg,
-                num_bytes=register.bus_width_in_bytes,
+                num_bytes=register_addr.bus_width_in_bytes,
                 end_with_stop=(not use_restart),
                 start_with_restart=False,
             )
@@ -214,7 +226,7 @@ class I2CMaster(ABC):
     def write_register(
         self,
         address: int,
-        register: RegisterAddress,
+        register: RegisterAddress | int,
         data: Bits | str | int | list[int],
         num_bytes: int | None = None,
         read_back: bool = False,
@@ -225,7 +237,8 @@ class I2CMaster(ABC):
         address and subsequent bytes are values to write into a register.
 
         :param address: i2c address of the target device
-        :param register: address of the register to write to
+        :param register: address of the register to write to; if int, then it is assumed that register address is one
+            byte wide and thus valid value for this field is from 0 to 255.
         :param data: array of bits to send to the target device; if int or list[int], then these are assumed to be
             bytes. It can be empty list which means that i2c transaction will include only register address/command.
         :param num_bytes: number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
@@ -242,15 +255,19 @@ class I2CMaster(ABC):
         if address < 0:
             raise I2CError("Invalid i2c device address")
 
+        register_addr: RegisterAddress = (
+            RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register
+        )
+
         log_msg = []
         try:
             register_value = I2CMaster.mk_payload(data, num_bytes)
             value_num_bytes = int(register_value.len / 8)
             write_success = self._write(
                 address,
-                data=BitArray(f"uint:{8 * register.bus_width_in_bytes}={register.address}") + register_value,
+                data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}") + register_value,
                 log_msg=log_msg,
-                num_bytes=(value_num_bytes + register.bus_width_in_bytes),
+                num_bytes=(value_num_bytes + register_addr.bus_width_in_bytes),
                 end_with_stop=True,
                 start_with_restart=False,
             )
@@ -261,9 +278,9 @@ class I2CMaster(ABC):
             else:  # read it back
                 write_success = self._write(
                     address,
-                    data=BitArray(f"uint:{8 * register.bus_width_in_bytes}={register.address}"),
+                    data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}"),
                     log_msg=log_msg,
-                    num_bytes=register.bus_width_in_bytes,
+                    num_bytes=register_addr.bus_width_in_bytes,
                     end_with_stop=(not use_restart),
                     start_with_restart=False,
                 )

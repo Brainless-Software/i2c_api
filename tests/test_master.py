@@ -1,7 +1,7 @@
 import pytest
 from bitstring import BitArray, Bits
 
-from i2c_api import I2CMaster
+from i2c_api import I2CMaster, RegisterAddress
 
 
 def test_mk_payload_int():
@@ -55,3 +55,9 @@ def test_mk_payload_bits():
 
     with pytest.raises(ValueError):
         I2CMaster.mk_payload(Bits("0x002"), pad_up_to_num_bytes=1)
+
+
+def test_register_address():
+    assert RegisterAddress(0x07, 1).address == 7
+    with pytest.raises(ValueError):
+        RegisterAddress(0xABC, 1)
