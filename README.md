@@ -1,7 +1,7 @@
 # I²C API
 
-Abstract Python classes for [I2C](https://en.wikipedia.org/wiki/I2C) master devices (normally dongles such I2CDriver
-etc.) to communicate with I2C slaves.
+Abstract Python classes for [I2C](https://en.wikipedia.org/wiki/I2C) master devices (normally dongles such as 
+[I2CDriver](https://i2cdriver.com/) and so on) to communicate with I2C slaves.
 
 I2C is a simple 2-wire (SDA and SCL lines) protocol commonly used to communicate with environmental sensors, motor and
 pwm controllers and so on. Multiple devices can be connected on the same I2C bus. One of which is a master/controller
