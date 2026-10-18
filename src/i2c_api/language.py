@@ -18,12 +18,9 @@ class I2CTransaction:
     def __repr__(self) -> str:
         return ".".join(str(c) for c in self._i2c._i2c_commands)
 
-    def exec(self, master: I2CMaster | None = None, device_address: int = -1) -> ExecResults:
-        if self._i2c._master is None and master is None:
+    def exec(self, master: I2CMaster, device_address: int = -1) -> ExecResults:
+        if master is None:
             raise ValueError("I2CMaster must be provided to execute this transaction")
-
-        if device_address == -1:
-            device_address = self._i2c._default_device_address
 
         def get_transaction():
             if device_address == -1:
@@ -31,14 +28,13 @@ class I2CTransaction:
                     if isinstance(c, Address) and c.address == -1:
                         raise ValueError(
                             "Some Address(...) commands are given without the address. "
-                            "Thus, argument `address` must be provided."
+                            "Thus, argument `device_address` must be provided."
                         )
                 return self
 
             else:
                 # Autofill addresses if necessary.
-                new_root = I2CTransactionBuilder(self._i2c._master, self._i2c._default_device_address)
-                new_root._master = self._i2c._master
+                new_root = I2CTransactionBuilder()
                 for c in self._i2c._i2c_commands:
                     if isinstance(c, Address):
                         if c.address == -1:
@@ -48,10 +44,9 @@ class I2CTransaction:
                     else:
                         new_root._i2c_commands.append(c)
 
-                return new_root
+                return I2CTransaction(new_root)
 
-        master_to_use = self._i2c._master if master is None else master
-        return master_to_use.exec(get_transaction())
+        return master.exec(get_transaction())
 
     @staticmethod
     def to_json(transaction: "I2CTransaction") -> str:
@@ -127,18 +122,13 @@ class I2CAddress:
         self._i2c._i2c_commands.append(Address(device_address))
         return I2CReadWrite(self._i2c)
 
-    def address10(self, device_address: int = -1) -> I2CReadWrite:
-        raise RuntimeError("Not implemented")
-
 
 class I2CTransactionBuilder:
-    def __init__(self, master: I2CMaster | None = None, default_device_address: int = -1):
-        self._master = master
-        self._default_device_address = default_device_address
+    def __init__(self):
         self._i2c_commands: list[Command] = []
 
     def start(self) -> I2CAddress:
-        new_root = I2CTransactionBuilder(self._master, self._default_device_address)
+        new_root = I2CTransactionBuilder()
         new_root._i2c_commands.append(S())
         return I2CAddress(new_root)
 

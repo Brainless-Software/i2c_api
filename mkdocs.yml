@@ -1,0 +1,24 @@
+site_name: I2C API
+theme:
+  name: material
+  palette:
+    primary: amber
+  logo:
+    images/i2c-logo.gif
+  features:
+    - navigation.sections
+
+# Markdown extensions
+markdown_extensions:
+  - attr_list
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - "Introduction": "index.md"
+  - "I2C Language": "language.md"
+  - "Read/Write ops": "rw.md"
+  - "Registers access": "registers.md"
+  - "API": "api.md"
