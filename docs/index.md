@@ -1,5 +1,3 @@
-# I²C API
-
 Python library that provides abstract classes for [I2C](https://en.wikipedia.org/wiki/I2C) master devices (normally 
 dongles such as [I2CDriver](https://i2cdriver.com/) and similar) to communicate with I2C slaves.
 
@@ -12,15 +10,15 @@ while master and a target slave take turns driving the data (SDA) line. Whicheve
 byte sent recipient device sends ACK or NACK bit at the end of each byte. Each exchange is known as transaction.
 And each transaction starts with start condition (`S` in official documentation) and ends with stop
 condition (`P` in official documentation) driven by the master. From standpoint of
-view of the master transaction consist of mixture of one or more of read or write operations (blocks). If a single
-transaction has more than one block, blocks are separated by the restart condition (`Sr` in on official documentation).
+view of the master transaction consist of mixture of one or more of read or write operations (frames). If a single
+transaction has more than one frames, frames are separated by the restart condition (`Sr` in on official documentation).
 In [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form) notation it can be written like so
 
 ```ebnf
 S           = start_condition;
 Sr          = restart;
 P           = stop_condition;
-transaction = S block {Sr block} P;
+transaction = S frame {Sr frame} P;
 ```
 
 Both read and
@@ -33,11 +31,11 @@ completing read or write part master can issue the stop condition and thus and t
 condition followed by read or write part.
 
 ```ebnf
-block       = read_block | write_bloc;
+frame       = read_frame | write_bloc;
 read_bit    = 1;
 write_bit   = 0;
-read_block  = slave_address_7bits read_bit [byte_from_slave];
-write_block = slave_address_7bits write_bit {byte_to_slave};
+read_frame  = slave_address_7bits read_bit [byte_from_slave];
+write_frame = slave_address_7bits write_bit {byte_to_slave};
 ```
 
 Notice, that nowhere above we talked about reading or writing registers.

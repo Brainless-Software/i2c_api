@@ -1,5 +1,3 @@
-## I2C Language
-
 This API allows one to construct arbitrary I2C transactions in a very intuitive way. It relies on the Python type system
 (such as it is) to constrain function calls only to valid set in the valid order. Thus making it impossible to construct
 an invalid I2C transaction. Each part of the transaction is a function call which can be chained with a next valid

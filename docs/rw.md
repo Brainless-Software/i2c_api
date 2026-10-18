@@ -1,5 +1,3 @@
-## Read/Write ops
-
 To hide details I2C protocol you can use methods `read($device_address, $num_bytes)` and
 `write($device_address, $data, ...)` present in the `I2CMaster` class. These methods encapsulate the whole transaction,
 that is communications starts with start condition and ends with the stop.

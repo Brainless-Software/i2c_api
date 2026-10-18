@@ -1,5 +1,3 @@
-## Register access
-
 To farther simplify interation with devices that have concepts of registers as described above
 
 ```python
@@ -48,8 +46,8 @@ To confirm that data was acutally written you can set `read_back=True` (default 
 data = i2c_master.write_register(0x42, register=0x7, data=0x11, read_back=True)
 ```
 
-This will write register and will then read it back. Normally these two operations, 
+This will write register and will then read it back. Normally these two operations,
 register write and then read will be in two separate transaction as not every dongle supports
-restart between write and read op. If you dongle does support it though you can 
+restart between write and read op. If you dongle does support it though you can
 indicate that you want to use restart and do everything that this function does in
 one single transaction by setting `use_restart=True`.
