@@ -21,4 +21,5 @@ nav:
   - "I2C Language": "language.md"
   - "Read/Write ops": "rw.md"
   - "Registers access": "registers.md"
+  - "Supported devices": "devices.md"
   - "API": "api.md"
