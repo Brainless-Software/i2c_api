@@ -35,6 +35,8 @@ dev = [
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "ruff",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.7",
 ]
 
 
