@@ -13,7 +13,7 @@ byte sent recipient device sends ACK or NACK bit at the end of each byte. Each e
 And each transaction starts with start condition (`S` in official documentation) and ends with stop
 condition (`P` in official documentation) driven by the master. From standpoint of
 view of the master transaction consist of mixture of one or more of read or write operations (frames). If a single
-transaction has more than one frames, frames are separated by the restart condition (`Sr` in on official documentation).
+transaction has more than one frame, frames are separated by the restart condition (`Sr` in on official documentation).
 In [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form) notation it can be written like so
 
 ```ebnf
@@ -29,7 +29,7 @@ that this is a read or write
 operation. If operation is "read", then master stops driving the data line and then the target slave drives data line in
 response. If master keep driving the clock and does not issue a stop condition slave must keep sending bytes back.
 If operation is "write", then master continues driving the data line sending as many bytes as necessary. After
-completing read or write part master can issue the stop condition and thus and transaction, or it could issue restart
+completing read or write part master can issue the stop condition and thus end transaction, or it could issue restart
 condition followed by read or write part.
 
 ```ebnf
