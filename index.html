@@ -406,7 +406,7 @@ byte sent recipient device sends ACK or NACK bit at the end of each byte. Each e
 And each transaction starts with start condition (<code>S</code> in official documentation) and ends with stop
 condition (<code>P</code> in official documentation) driven by the master. From standpoint of
 view of the master transaction consist of mixture of one or more of read or write operations (frames). If a single
-transaction has more than one frames, frames are separated by the restart condition (<code>Sr</code> in on official documentation).
+transaction has more than one frame, frames are separated by the restart condition (<code>Sr</code> in on official documentation).
 In <a href="https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form">EBNF</a> notation it can be written like so</p>
 <div class="highlight"><pre><span></span><code><span class="k">S           </span><span class="o">=</span> <span class="k">start_condition</span><span class="p">;</span>
 <span class="k">Sr          </span><span class="o">=</span> <span class="k">restart</span><span class="p">;</span>
@@ -419,7 +419,7 @@ that this is a read or write
 operation. If operation is "read", then master stops driving the data line and then the target slave drives data line in
 response. If master keep driving the clock and does not issue a stop condition slave must keep sending bytes back.
 If operation is "write", then master continues driving the data line sending as many bytes as necessary. After
-completing read or write part master can issue the stop condition and thus and transaction, or it could issue restart
+completing read or write part master can issue the stop condition and thus end transaction, or it could issue restart
 condition followed by read or write part.</p>
 <div class="highlight"><pre><span></span><code><span class="k">frame       </span><span class="o">=</span> <span class="k">read_frame </span><span class="p">|</span> <span class="k">write_bloc</span><span class="p">;</span>
 <span class="k">read_bit    </span><span class="o">=</span> <span class="err">1</span><span class="p">;</span>
