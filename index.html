@@ -69,11 +69,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#i2c-api" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -205,8 +200,6 @@
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
-      
-        
       
       
       <a href="." class="md-nav__link md-nav__link--active">
@@ -355,8 +348,6 @@
   
   
   
-    
-  
   
 </nav>
                   </div>
@@ -373,7 +364,8 @@
 
 
 
-<h1 id="i2c-api">I²C API<a class="headerlink" href="#i2c-api" title="Permanent link">&para;</a></h1>
+  <h1>Introduction</h1>
+
 <p>Python library that provides abstract classes for <a href="https://en.wikipedia.org/wiki/I2C">I2C</a> master devices (normally 
 dongles such as <a href="https://i2cdriver.com/">I2CDriver</a> and similar) to communicate with I2C slaves.</p>
 <p>I2C is a simple 2-wire (SDA and SCL lines) protocol commonly used to communicate with environmental sensors, motor and
@@ -385,13 +377,13 @@ while master and a target slave take turns driving the data (SDA) line. Whicheve
 byte sent recipient device sends ACK or NACK bit at the end of each byte. Each exchange is known as transaction.
 And each transaction starts with start condition (<code>S</code> in official documentation) and ends with stop
 condition (<code>P</code> in official documentation) driven by the master. From standpoint of
-view of the master transaction consist of mixture of one or more of read or write operations (blocks). If a single
-transaction has more than one block, blocks are separated by the restart condition (<code>Sr</code> in on official documentation).
+view of the master transaction consist of mixture of one or more of read or write operations (frames). If a single
+transaction has more than one frames, frames are separated by the restart condition (<code>Sr</code> in on official documentation).
 In <a href="https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form">EBNF</a> notation it can be written like so</p>
 <div class="highlight"><pre><span></span><code><span class="k">S           </span><span class="o">=</span> <span class="k">start_condition</span><span class="p">;</span>
 <span class="k">Sr          </span><span class="o">=</span> <span class="k">restart</span><span class="p">;</span>
 <span class="k">P           </span><span class="o">=</span> <span class="k">stop_condition</span><span class="p">;</span>
-<span class="k">transaction </span><span class="o">=</span> <span class="k">S block </span><span class="p">{</span><span class="k">Sr block</span><span class="p">}</span> <span class="k">P</span><span class="p">;</span>
+<span class="k">transaction </span><span class="o">=</span> <span class="k">S frame </span><span class="p">{</span><span class="k">Sr frame</span><span class="p">}</span> <span class="k">P</span><span class="p">;</span>
 </code></pre></div>
 <p>Both read and
 write ops are initiated by the master. Master writes 7 bits target slave address following by a bit which indicates
@@ -401,11 +393,11 @@ response. If master keep driving the clock and does not issue a stop condition s
 If operation is "write", then master continues driving the data line sending as many bytes as necessary. After
 completing read or write part master can issue the stop condition and thus and transaction, or it could issue restart
 condition followed by read or write part.</p>
-<div class="highlight"><pre><span></span><code><span class="k">block       </span><span class="o">=</span> <span class="k">read_block </span><span class="p">|</span> <span class="k">write_bloc</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">frame       </span><span class="o">=</span> <span class="k">read_frame </span><span class="p">|</span> <span class="k">write_bloc</span><span class="p">;</span>
 <span class="k">read_bit    </span><span class="o">=</span> <span class="err">1</span><span class="p">;</span>
 <span class="k">write_bit   </span><span class="o">=</span> <span class="err">0</span><span class="p">;</span>
-<span class="k">read_block  </span><span class="o">=</span> <span class="k">slave_address_7bits read_bit </span><span class="p">[</span><span class="k">byte_from_slave</span><span class="p">];</span>
-<span class="k">write_block </span><span class="o">=</span> <span class="k">slave_address_7bits write_bit </span><span class="p">{</span><span class="k">byte_to_slave</span><span class="p">};</span>
+<span class="k">read_frame  </span><span class="o">=</span> <span class="k">slave_address_7bits read_bit </span><span class="p">[</span><span class="k">byte_from_slave</span><span class="p">];</span>
+<span class="k">write_frame </span><span class="o">=</span> <span class="k">slave_address_7bits write_bit </span><span class="p">{</span><span class="k">byte_to_slave</span><span class="p">};</span>
 </code></pre></div>
 <p>Notice, that nowhere above we talked about reading or writing registers.
 Common way to define register write is simply to send <code>write($device_address)</code> followed by write bit and

@@ -71,11 +71,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#register-access" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -290,24 +285,6 @@
       
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Registers access
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -324,34 +301,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#register-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Register access
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -402,25 +351,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#register-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Register access
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -438,7 +368,6 @@
 
   <h1>Registers access</h1>
 
-<h2 id="register-access">Register access<a class="headerlink" href="#register-access" title="Permanent link">&para;</a></h2>
 <p>To farther simplify interation with devices that have concepts of registers as described above</p>
 <div class="highlight"><pre><span></span><code><span class="n">i2c_master</span> <span class="o">=</span> <span class="n">I2CMaster</span><span class="p">()</span>
 <span class="n">reg_data</span><span class="p">:</span> <span class="n">Bits</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">i2c_master</span><span class="o">.</span><span class="n">read_register</span><span class="p">(</span>
@@ -469,9 +398,9 @@ bytes or if not provided to the nearest number of bytes to fit payload in.</p>
 <p>To confirm that data was acutally written you can set <code>read_back=True</code> (default is False).</p>
 <div class="highlight"><pre><span></span><code><span class="n">data</span> <span class="o">=</span> <span class="n">i2c_master</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="mh">0x42</span><span class="p">,</span> <span class="n">register</span><span class="o">=</span><span class="mh">0x7</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="mh">0x11</span><span class="p">,</span> <span class="n">read_back</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<p>This will write register and will then read it back. Normally these two operations, 
+<p>This will write register and will then read it back. Normally these two operations,
 register write and then read will be in two separate transaction as not every dongle supports
-restart between write and read op. If you dongle does support it though you can 
+restart between write and read op. If you dongle does support it though you can
 indicate that you want to use restart and do everything that this function does in
 one single transaction by setting <code>use_restart=True</code>.</p>
 
