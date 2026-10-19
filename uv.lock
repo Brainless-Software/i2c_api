@@ -340,7 +340,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "bitstring", specifier = ">=4.4.0" }]
+requires-dist = [{ name = "bitstring", specifier = ">=4.4.0,<5.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
