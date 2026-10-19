@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from bitstring import BitArray, Bits
 
 from i2c_api.commands import Address, P
-from i2c_api.errors import I2CError
 from i2c_api.exec_results import ExecResults
 from i2c_api.language import I2CTransaction
 from i2c_api.log import I2CTransactionElement
@@ -153,9 +152,9 @@ class I2CMaster(ABC):
         from the slave.
         """
         if not isinstance(transaction, I2CTransaction):
-            raise I2CError("transaction argument must be instance of I2CTransactionEnd")
+            raise ValueError("transaction argument must be instance of I2CTransaction")
         elif transaction._i2c._i2c_commands == [] or not isinstance(transaction._i2c._i2c_commands[-1], P):
-            raise I2CError("Unable to execute incomplete transaction")
+            raise ValueError("Unable to execute incomplete transaction")
         elif device_address == -1:
             for c in transaction._i2c._i2c_commands:
                 if isinstance(c, Address) and c.address == -1:
@@ -163,8 +162,7 @@ class I2CMaster(ABC):
                         "Some Address(...) commands are given without the address. "
                         "Thus, argument `address` must be provided."
                     )
-        else:
-            return self._exec(transaction, device_address)
+        return self._exec(transaction, device_address)
 
     @abstractmethod
     def _exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
@@ -194,7 +192,7 @@ class I2CMaster(ABC):
         :return: None if at any point during these transactions client sends NACK or actual Bits holding response data
         """
         if address < 0:
-            raise I2CError("Invalid i2c device address")
+            raise ValueError("Invalid i2c device address")
 
         register_addr: RegisterAddress = (
             RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register
@@ -253,7 +251,7 @@ class I2CMaster(ABC):
             register might be a success but readback fail and thus None be returned.
         """
         if address < 0:
-            raise I2CError("Invalid i2c device address")
+            raise ValueError("Invalid i2c device address")
 
         register_addr: RegisterAddress = (
             RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register

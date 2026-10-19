@@ -1,7 +1,7 @@
 Python library that provides abstract classes for [I2C](https://en.wikipedia.org/wiki/I2C) master devices (normally 
 dongles such as [I2CDriver](https://i2cdriver.com/) and similar) to communicate with I2C slaves.
 
-Source code for this library can be found here [github::i2c_api](https://github.com/Brainless-Software/i2c_api).
+Source code for this library can be found here [github/i2c_api.git](https://github.com/Brainless-Software/i2c_api).
 
 I2C is a simple 2-wire (SDA and SCL lines) protocol commonly used to communicate with environmental sensors, motor and
 pwm controllers and so on. Multiple devices can be connected on the same I2C bus. One of which is a master/controller
