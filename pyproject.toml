@@ -5,7 +5,7 @@ dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "bitstring >= 4.4.0, < 5.0.0",
+    "bitstring >= 5.0.0, < 6.0.0",
 ]
 
 [build-system]
