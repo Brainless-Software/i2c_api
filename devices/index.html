@@ -395,12 +395,16 @@
 
   <h1>Supported devices</h1>
 
-<p>Following devices (usb-to-i2c bridges) are supported by <em>i2c_drivers</em> library which implements this API.</p>
+<p>Following devices (usb-to-i2c bridges) are supported by <a href="https://github.com/Brainless-Software/i2c_drivers"><em>i2c_drivers</em></a> library which implements this API.</p>
 <ul>
 <li><a href="https://i2cdriver.com/">I2CDriver</a></li>
 <li><a href="https://www.adafruit.com/product/4471">MCP2221</a> (official chip link is <a href="https://www.microchip.com/en-us/product/mcp2221">here</a>)</li>
 <li><a href="https://www.adafruit.com/product/2264">FT232H</a></li>
 </ul>
+<p>To add these to your project do</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>i2c_api<span class="w"> </span>i2c_drivers
+uv<span class="w"> </span>sync
+</code></pre></div>
 
 
 
