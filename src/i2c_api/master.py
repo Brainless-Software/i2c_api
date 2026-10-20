@@ -33,11 +33,11 @@ class I2CMaster(ABC):
     @staticmethod
     def __pad_up_to_bytes(data: BitArray, num_bytes: int | None) -> BitArray:
         if num_bytes is None:
-            if data.len % 8 != 0:
-                data.prepend(BitArray(8 - data.len % 8))
+            if len(data) % 8 != 0:
+                data.prepend(BitArray.from_zeros(8 - len(data) % 8))
             return data
-        elif data.len <= num_bytes * 8:
-            data.prepend(BitArray(num_bytes * 8 - data.len))
+        elif len(data) <= num_bytes * 8:
+            data.prepend(BitArray.from_zeros(num_bytes * 8 - len(data)))
             return data
         else:
             raise ValueError(f"Input bit array is larger then pad_up_to_num_bytes={num_bytes}")
