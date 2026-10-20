@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from functools import reduce
 
 from bitstring import BitArray, Bits
 
 from i2c_api.commands import Address, P
 from i2c_api.exec_results import ExecResults
-from i2c_api.language import I2CTransaction
-from i2c_api.log import I2CTransactionElement
+from i2c_api.language import I2CTransaction, I2CTransactionBuilder
+from i2c_api.log import I2CMessage, I2CTransactionElement
 from i2c_api.logger import I2CLogger
 
 
@@ -22,9 +23,7 @@ class RegisterAddress:
 
     def __post_init__(self):
         if self.address < 0 or self.address > (pow(2, self.bus_width_in_bytes * 8) - 1):
-            raise ValueError(
-                f"Invalid register address {self.address} as it does not fit within {self.bus_width_in_bytes} bytes"
-            )
+            raise ValueError(f"Register address 0x{self.address:02X} is outside of valid range")
 
 
 class I2CMaster(ABC):
@@ -84,43 +83,22 @@ class I2CMaster(ABC):
             payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width.
         :return: True or False indicating if write succeeded, which is that client responded with ACK bits.
         """
-        log_msg = []
+        log_message = [I2CMessage.START, I2CMessage.DATA_MOSI(BitArray(f"uint:7={address}")), I2CMessage.WRITE]
+        data_out: list[Bits] = [BitArray(f"uint:8={x}") for x in I2CMaster.mk_payload(data, num_bytes).tobytes()]
         try:
-            return self._write(
-                address,
-                data=data,
-                num_bytes=num_bytes,
-                log_msg=log_msg,
-                end_with_stop=True,
-                start_with_restart=False,
+            data, is_success = (
+                I2CTransactionBuilder().start().address(address).write([b.uint for b in data_out]).stop().exec(self)
             )
+            if is_success:
+                log_message.append(I2CMessage.ACK)
+                for b in data_out:
+                    log_message.extend([I2CMessage.DATA_MOSI(b), I2CMessage.ACK])
+            else:
+                log_message.append(I2CMessage.NACK)
+            return is_success
         finally:
-            self.logger().log_message(log_msg)
-
-    @abstractmethod
-    def _write(
-        self,
-        address: int,
-        *,
-        data: Bits | str | int | list[int],
-        log_msg: list[I2CTransactionElement],
-        num_bytes: int | None,
-        end_with_stop: bool,
-        start_with_restart: bool,
-    ) -> bool:
-        pass
-
-    @abstractmethod
-    def _read(
-        self,
-        address: int,
-        *,
-        num_bytes: int,
-        log_msg: list[I2CTransactionElement],
-        end_with_stop: bool,
-        start_with_restart: bool,
-    ) -> Bits | None:
-        pass
+            log_message.append(I2CMessage.STOP)
+            self.logger().log_message(log_message)
 
     def read(self, address: int, num_bytes: int = 1) -> Bits | None:
         """
@@ -131,17 +109,20 @@ class I2CMaster(ABC):
         :param num_bytes: number of bytes to read
         :return: None if failed to read data from the client (that is client did not send ACK bits) or data is Bits
         """
-        log_msg = []
+        log_message = [I2CMessage.START, I2CMessage.DATA_MOSI(BitArray(f"uint:7={address}")), I2CMessage.READ]
         try:
-            return self._read(
-                address,
-                num_bytes=num_bytes,
-                end_with_stop=True,
-                log_msg=log_msg,
-                start_with_restart=False,
-            )
+            data, is_success = I2CTransactionBuilder().start().address(address).read(num_bytes).stop().exec(self)
+            if is_success:
+                log_message.append(I2CMessage.ACK)
+                for b in data[0]:
+                    log_message.extend([I2CMessage.DATA_MISO(b), I2CMessage.ACK])
+                return reduce(lambda acc, b: acc + b, data[0], BitArray())
+            else:
+                log_message.append(I2CMessage.NACK)
+                return None
         finally:
-            self.logger().log_message(log_msg)
+            log_message.append(I2CMessage.STOP)
+            self.logger().log_message(log_message)
 
     def exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
         """
@@ -191,35 +172,49 @@ class I2CMaster(ABC):
             write operations
         :return: None if at any point during these transactions client sends NACK or actual Bits holding response data
         """
-        if address < 0:
-            raise ValueError("Invalid i2c device address")
-
         register_addr: RegisterAddress = (
             RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register
         )
+        register_address_bitarray: BitArray = I2CMaster.mk_payload(
+            BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}"),
+            register_addr.bus_width_in_bytes,
+        )
+        reg_addr_out = [BitArray(f"uint:8={x}") for x in register_address_bitarray.tobytes()]
 
-        log_msg = []
-        try:
-            write_success = self._write(
-                address,
-                data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}"),
-                log_msg=log_msg,
-                num_bytes=register_addr.bus_width_in_bytes,
-                end_with_stop=(not use_restart),
-                start_with_restart=False,
-            )
-            if write_success:
-                return self._read(
-                    address,
-                    num_bytes=num_bytes,
-                    log_msg=log_msg,
-                    end_with_stop=True,
-                    start_with_restart=use_restart,
-                )
+        if not use_restart:
+            if self.write(address, register_address_bitarray):
+                return self.read(address, num_bytes)
             else:
                 return None
-        finally:
-            self.__logger.log_message(log_msg)
+        else:
+            addr_log_message = I2CMessage.DATA_MOSI(BitArray(f"uint:7={address}"))
+            log_message = [I2CMessage.START, addr_log_message, I2CMessage.WRITE]
+            try:
+                data, is_success = (
+                    I2CTransactionBuilder()
+                    .start()
+                    .address(address)
+                    .write([b.uint for b in reg_addr_out])
+                    .restart()
+                    .address(address)
+                    .read(num_bytes)
+                    .stop()
+                    .exec(self)
+                )
+                if is_success:
+                    log_message.append(I2CMessage.ACK)
+                    for b in reg_addr_out:
+                        log_message.extend([I2CMessage.DATA_MOSI(b), I2CMessage.ACK])
+                    log_message.extend([I2CMessage.RESTART, addr_log_message, I2CMessage.READ, I2CMessage.ACK])
+                    for b in data[0]:
+                        log_message.extend([I2CMessage.DATA_MISO(b), I2CMessage.ACK])
+                    return reduce(lambda acc, b: acc + b, data[0], BitArray())
+                else:
+                    log_message.append(I2CMessage.NACK)
+                    return None
+            finally:
+                log_message.append(I2CMessage.STOP)
+                self.logger().log_message(log_message)
 
     def write_register(
         self,
@@ -250,50 +245,18 @@ class I2CMaster(ABC):
             including when performing readback or any other reason that i2c driver failed. Which means that write into
             register might be a success but readback fail and thus None be returned.
         """
-        if address < 0:
-            raise ValueError("Invalid i2c device address")
-
         register_addr: RegisterAddress = (
             RegisterAddress(address=register, bus_width_in_bytes=1) if isinstance(register, int) else register
         )
 
-        log_msg = []
-        try:
-            register_value = I2CMaster.mk_payload(data, num_bytes)
-            value_num_bytes = int(register_value.len / 8)
-            write_success = self._write(
-                address,
-                data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}") + register_value,
-                log_msg=log_msg,
-                num_bytes=(value_num_bytes + register_addr.bus_width_in_bytes),
-                end_with_stop=True,
-                start_with_restart=False,
-            )
-            if not write_success:
-                return None
-            elif not read_back:
-                return register_value
-            else:  # read it back
-                write_success = self._write(
-                    address,
-                    data=BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}"),
-                    log_msg=log_msg,
-                    num_bytes=register_addr.bus_width_in_bytes,
-                    end_with_stop=(not use_restart),
-                    start_with_restart=False,
-                )
-                if write_success:
-                    return self._read(
-                        address,
-                        num_bytes=value_num_bytes,
-                        log_msg=log_msg,
-                        end_with_stop=True,
-                        start_with_restart=use_restart,
-                    )
-                else:
-                    return None
-        finally:
-            self.logger().log_message(log_msg)
+        register_value = I2CMaster.mk_payload(data, num_bytes)
+        write_data = BitArray(f"uint:{8 * register_addr.bus_width_in_bytes}={register_addr.address}") + register_value
+        if not self.write(address, write_data):
+            return None
+        elif read_back:
+            return self.read_register(address, register_addr, len(register_value.tobytes()), use_restart=use_restart)
+        else:
+            return register_value
 
     @abstractmethod
     def scan(self) -> list[int]:
@@ -336,3 +299,16 @@ class I2CMaster(ABC):
         Sets clock speed to `speed` value in KHz. Supplied value must be one of the returned one by
         method `list_clk_speeds()`, if not, then RuntimeError is raised.
         """
+
+    @abstractmethod
+    def close(self):
+        """
+        Some dongles require to close instance of I2CMaster. Thus make sure to call it.
+        """
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
