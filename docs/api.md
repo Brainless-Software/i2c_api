@@ -27,6 +27,7 @@
   * Returns:
       * _True_ or _False_ indicating if write succeeded, which is that client responded with ACK bits.
 
+<br/>
 
 * **exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
 
@@ -36,6 +37,7 @@
   between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
   from the slave.
 
+<br/>
 
 * **read_register (
     address: int, 
@@ -60,6 +62,7 @@
   * Returns:
       * _None_ if at any point during these transactions client sends NACK or actual Bits holding response data
 
+<br/>
 
 * **write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
   None = None, read_back: bool = False, use_restart: bool = True) -> Bits | None**
@@ -85,6 +88,7 @@
       when performing readback or any other reason that i2c driver failed. Which means that write into register
       might be a success but readback fail and thus None be returned.
 
+<br/>
 
 * **scan () -> list[int]**
 
@@ -93,31 +97,37 @@
   * Returns
     * list of addresses of connected devices
 
+<br/>
 
 * **list_pullups () -> list[str]**
 
   Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].
 
+<br/>
 
 * **set_pullup (pullup_value: str)**
 
   Set pullup resistor value. This should be one of the strings returned by `list_pullups()` method.
 
+<br/>
 
 * **get_pullup () -> str**
 
   Returns currently active pullup resistor value in human-readable format.
 
+<br/>
 
 * **list_clk_speeds () -> list[int]**
 
   Returns list of available configurable clock speeds in KHz.
 
+<br/>
 
 * **get_clk_speed () -> int**
 
   Returns currently configured clock speed in KHz.
 
+<br/>
 
 * **set_clk_speed (speed: int)**
 
