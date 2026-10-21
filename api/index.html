@@ -563,16 +563,13 @@
 <li><code>num_bytes</code> - number of bytes to read</li>
 </ul>
 </li>
-<li>
-<p>Returns:</p>
-<ul>
+<li>Returns:<ul>
 <li><em>None</em> if failed to read data from the client (that is client did not send ACK bits) or data is Bits</li>
 </ul>
 </li>
-<li>
-<p><strong>write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -&gt; bool</strong></p>
-</li>
 </ul>
+<p><br/><br/>
+* <strong>write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -&gt; bool</strong></p>
 <p>Performs write transaction sending <code>data</code> to the target device identified by <code>address</code>. At the end master will
   issue Stop condition and will release the clock line.</p>
 <ul>
