@@ -1,5 +1,3 @@
-from i2c_api import RegisterAddress
-
 ## I2CMaster
 
 * **read (address: int, num_bytes: int = 1) -> Bits | None**
@@ -36,8 +34,11 @@ from i2c_api import RegisterAddress
   from the slave.
 
 
-* **read_register (address: int, register: RegisterAddress | int, num_bytes: int = 1, use_restart: bool = True) ->
-  Bits | None**
+* **read_register (
+    address: int, 
+    register: RegisterAddress | int, 
+    num_bytes: int = 1, 
+    use_restart: bool = True) -> Bits | None**
 
   Reads register from the target device identified by `address`. This is a compound operation where we
   send first `write(address, register, num_bytes=1)` followed by `read(address, register, num_bytes)`.
