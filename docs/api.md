@@ -3,7 +3,8 @@
 * **read (address: int, num_bytes: int = 1) -> Bits | None**
 
   Performs read transaction reading `num_bytes` (default is 1) from the target device identified by `address`.
-  At the end master will issue Stop condition and will release the clock line.
+  At the end master will issue Stop condition and will release the clock line!
+
   * Arguments:
       * `address` - i2c address of the target device
       * `num_bytes` - number of bytes to read
