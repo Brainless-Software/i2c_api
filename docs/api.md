@@ -4,11 +4,11 @@
 
   Performs read transaction reading `num_bytes` (default is 1) from the target device identified by `address`.
   At the end master will issue Stop condition and will release the clock line.
-    * Arguments:
-        * `address` - i2c address of the target device
-        * `num_bytes` - number of bytes to read
-    * Returns:
-        * None if failed to read data from the client (that is client did not send ACK bits) or data is Bits
+  * Arguments:
+      * `address` - i2c address of the target device
+      * `num_bytes` - number of bytes to read
+  * Returns:
+      * None if failed to read data from the client (that is client did not send ACK bits) or data is Bits
 
 
 * **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
@@ -139,7 +139,7 @@ Named tuple returned when calling `I2CMaster.exec(...)`. It has fields.
 
 Calling `I2CMaster.read(...)`, `.write(...)`, `.read_register(...)` and `.write_register(...)` (but not `.exec(...)`)
 will generate log messages dispatched to the logger. Note that these log message might be very inaccurate since many
-dongles do not have an ability to return details of failed transaction, such as where exactly in the transaction NACK
+dongles do not have ability to return details of failed transaction, such as where exactly in the transaction NACK
 happened, just that it happened. These log messages are to be used in the advisory role only.
 
 ## I2CMessage
