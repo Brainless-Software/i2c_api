@@ -583,21 +583,21 @@
     payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width</li>
 </ul>
 </li>
-<li>
-<p>Returns:</p>
-<ul>
+<li>Returns:<ul>
 <li><em>True</em> or <em>False</em> indicating if write succeeded, which is that client responded with ACK bits.</li>
 </ul>
 </li>
-<li>
-<p><strong>exec (transaction: I2CTransaction, device_address: int = -1) -&gt; ExecResults</strong></p>
-</li>
+</ul>
+<p><br/></p>
+<ul>
+<li><strong>exec (transaction: I2CTransaction, device_address: int = -1) -&gt; ExecResults</strong></li>
 </ul>
 <p>Executes I2C commands in a single transaction and returns a named tuple <code>ExecResults</code> where first value is list
   of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
   Unsuccessful completion usual means that slave device responded with NACK at some point during communication
   between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
   from the slave.</p>
+<p><br/></p>
 <ul>
 <li><strong>read_register (
     address: int, 
@@ -621,16 +621,15 @@
     write operations</li>
 </ul>
 </li>
-<li>
-<p>Returns:</p>
-<ul>
+<li>Returns:<ul>
 <li><em>None</em> if at any point during these transactions client sends NACK or actual Bits holding response data</li>
 </ul>
 </li>
-<li>
-<p><strong>write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
-  None = None, read_back: bool = False, use_restart: bool = True) -&gt; Bits | None</strong></p>
-</li>
+</ul>
+<p><br/></p>
+<ul>
+<li><strong>write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
+  None = None, read_back: bool = False, use_restart: bool = True) -&gt; Bits | None</strong></li>
 </ul>
 <p>Writes register to the target device. This is basically same as <code>write(...)</code> where first write byte is register
   address and subsequent bytes are values to write into a register.</p>
@@ -650,47 +649,50 @@
   read operations. This value is applicable only of <code>read_back</code> is <code>True</code>.</li>
 </ul>
 </li>
-<li>
-<p>Returns:</p>
-<ul>
+<li>Returns:<ul>
 <li>Value written into the register or None if NACK was received at any moment from the client device including
   when performing readback or any other reason that i2c driver failed. Which means that write into register
   might be a success but readback fail and thus None be returned.</li>
 </ul>
 </li>
-<li>
-<p><strong>scan () -&gt; list[int]</strong></p>
-</li>
+</ul>
+<p><br/></p>
+<ul>
+<li><strong>scan () -&gt; list[int]</strong></li>
 </ul>
 <p>Scans for all client devices connected on this I2C bus.</p>
 <ul>
-<li>
-<p>Returns</p>
-<ul>
+<li>Returns<ul>
 <li>list of addresses of connected devices</li>
 </ul>
 </li>
-<li>
-<p><strong>list_pullups () -&gt; list[str]</strong></p>
-</li>
+</ul>
+<p><br/></p>
+<ul>
+<li><strong>list_pullups () -&gt; list[str]</strong></li>
 </ul>
 <p>Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].</p>
+<p><br/></p>
 <ul>
 <li><strong>set_pullup (pullup_value: str)</strong></li>
 </ul>
 <p>Set pullup resistor value. This should be one of the strings returned by <code>list_pullups()</code> method.</p>
+<p><br/></p>
 <ul>
 <li><strong>get_pullup () -&gt; str</strong></li>
 </ul>
 <p>Returns currently active pullup resistor value in human-readable format.</p>
+<p><br/></p>
 <ul>
 <li><strong>list_clk_speeds () -&gt; list[int]</strong></li>
 </ul>
 <p>Returns list of available configurable clock speeds in KHz.</p>
+<p><br/></p>
 <ul>
 <li><strong>get_clk_speed () -&gt; int</strong></li>
 </ul>
 <p>Returns currently configured clock speed in KHz.</p>
+<p><br/></p>
 <ul>
 <li><strong>set_clk_speed (speed: int)</strong></li>
 </ul>
