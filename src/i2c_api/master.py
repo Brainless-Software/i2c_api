@@ -287,11 +287,11 @@ class I2CMaster(ABC):
 
     @abstractmethod
     def list_clk_speeds(self) -> list[int]:
-        """Returns list of available configuable clock speeds in KHz."""
+        """Returns list of available configurable clock speeds in KHz."""
 
     @abstractmethod
     def get_clk_speed(self) -> int:
-        """Returns currently configued clock speed in KHz."""
+        """Returns currently configured clock speed in KHz."""
 
     @abstractmethod
     def set_clk_speed(self, speed: int) -> None:

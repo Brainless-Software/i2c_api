@@ -6,4 +6,4 @@ mkdocs:
     mkdocs build & sleep 1 & mkdocs gh-deploy
 
 test-cov:
-    pytest --cov=i2c_api --rootdir=src --cov-report=html & xdg-open htmlcov/index.html
+    pytest --cov=i2c_api --rootdir=src --cov-report=html; xdg-open htmlcov/index.html
