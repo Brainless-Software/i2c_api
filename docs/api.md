@@ -9,21 +9,22 @@
       * `address` - i2c address of the target device
       * `num_bytes` - number of bytes to read
   * Returns:
-      * None if failed to read data from the client (that is client did not send ACK bits) or data is Bits
+      * _None_ if failed to read data from the client (that is client did not send ACK bits) or data is Bits
 
 
 * **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
 
   Performs write transaction sending `data` to the target device identified by `address`. At the end master will
   issue Stop condition and will release the clock line.
-    * Arguments:
-        * `address` - i2c address of the target device
-        * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
-          If it is a string, then BitArray is constructed from that string and that is used as a payload
-        * `num_bytes` - number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
-          payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width
-    * Returns:
-        * _True_ or _False_ indicating if write succeeded, which is that client responded with ACK bits.
+
+  * Arguments:
+      * `address` - i2c address of the target device
+      * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
+        If it is a string, then BitArray is constructed from that string and that is used as a payload
+      * `num_bytes` - number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
+        payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width
+  * Returns:
+      * _True_ or _False_ indicating if write succeeded, which is that client responded with ACK bits.
 
 
 * **exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
@@ -47,15 +48,16 @@
   operations and if device does not support it them RuntimeError will be raised. if `use_restart` is False, then
   two separate transactions will be used to perform register read operation with clock line being released between
   them.
-    * Arguments:
-        * `address` - i2c address of the target device
-        * `register` - address of the register to read; if int, then it is assumed that register address is one byte
-          wide and thus valid value for this field is from 0 to 255.
-        * `num_bytes` - number of bytes to read; this should match length of the register
-        * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between read and
-          write operations
-    * Returns:
-        * _None_ if at any point during these transactions client sends NACK or actual Bits holding response data
+
+  * Arguments:
+      * `address` - i2c address of the target device
+      * `register` - address of the register to read; if int, then it is assumed that register address is one byte
+        wide and thus valid value for this field is from 0 to 255.
+      * `num_bytes` - number of bytes to read; this should match length of the register
+      * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between read and
+        write operations
+  * Returns:
+      * _None_ if at any point during these transactions client sends NACK or actual Bits holding response data
 
 
 * **write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
@@ -63,30 +65,32 @@
 
   Writes register to the target device. This is basically same as `write(...)` where first write byte is register
   address and subsequent bytes are values to write into a register.
-    * Arguments:
-        * `address` - i2c address of the target device
-        * `register` - address of the register to write to; if int, then it is assumed that register address is one
-          byte wide and thus valid value for this field is from 0 to 255.
-        * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be
-          bytes. It can be empty list which means that i2c transaction will include only register address/command.
-        * `num_bytes` - number of bytes to send or if _None_, then send all bits in `data` padded with zero bits to fit
-          payload into fixed number of bytes. Raises `ValueError` if num_bytes is not None and is less than data width.
-        * `read_back` - if _True_, then register read operation will be performed at the end and its value returned.
-          Otherwise, if _False_ (default), then just do write and return back to the user the same BitArray that was
-          supplied to this function as `data`.
-        * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between write and
-          read operations. This value is applicable only of `read_back` is `True`.
-    * Returns:
-        * Value written into the register or None if NACK was received at any moment from the client device including
-          when performing readback or any other reason that i2c driver failed. Which means that write into register
-          might be a success but readback fail and thus None be returned.
+
+  * Arguments:
+    * `address` - i2c address of the target device
+    * `register` - address of the register to write to; if int, then it is assumed that register address is one
+      byte wide and thus valid value for this field is from 0 to 255.
+    * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be
+      bytes. It can be empty list which means that i2c transaction will include only register address/command.
+    * `num_bytes` - number of bytes to send or if _None_, then send all bits in `data` padded with zero bits to fit
+      payload into fixed number of bytes. Raises `ValueError` if num_bytes is not None and is less than data width.
+    * `read_back` - if _True_, then register read operation will be performed at the end and its value returned.
+      Otherwise, if _False_ (default), then just do write and return back to the user the same BitArray that was
+      supplied to this function as `data`.
+    * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between write and
+      read operations. This value is applicable only of `read_back` is `True`.
+  * Returns:
+    * Value written into the register or None if NACK was received at any moment from the client device including
+      when performing readback or any other reason that i2c driver failed. Which means that write into register
+      might be a success but readback fail and thus None be returned.
 
 
 * **scan () -> list[int]**
 
   Scans for all client devices connected on this I2C bus.
-    * Returns
-        * list of addresses of connected devices
+
+  * Returns
+    * list of addresses of connected devices
 
 
 * **list_pullups () -> list[str]**
@@ -115,6 +119,7 @@
 
 
 * **set_clk_speed (speed: int)**
+
   Sets clock speed to `speed` value in KHz. Supplied value must be one of the returned one by
   method `list_clk_speeds()`, if not, then RuntimeError is raised.
 
