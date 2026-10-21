@@ -551,7 +551,6 @@
 
   <h1>API</h1>
 
-<p>from i2c_api import RegisterAddress</p>
 <h2 id="i2cmaster">I2CMaster<a class="headerlink" href="#i2cmaster" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>read (address: int, num_bytes: int = 1) -&gt; Bits | None</strong></li>
@@ -585,8 +584,11 @@
   between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
   from the slave.</p>
 <ul>
-<li><strong>read_register (address: int, register: RegisterAddress | int, num_bytes: int = 1, use_restart: bool = True) -&gt;
-  Bits | None</strong></li>
+<li><strong>read_register (
+    address: int, 
+    register: RegisterAddress | int, 
+    num_bytes: int = 1, 
+    use_restart: bool = True) -&gt; Bits | None</strong></li>
 </ul>
 <p>Reads register from the target device identified by <code>address</code>. This is a compound operation where we
   send first <code>write(address, register, num_bytes=1)</code> followed by <code>read(address, register, num_bytes)</code>.
