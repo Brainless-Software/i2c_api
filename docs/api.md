@@ -1,72 +1,73 @@
 ## I2CMaster
 
-### **read (address: int, num_bytes: int = 1) -> Bits | None**
+**read (address: int, num_bytes: int = 1) -> Bits | None**
 
-  Performs read transaction reading `num_bytes` (default is 1) from the target device identified by `address`.
-  At the end master will issue Stop condition and will release the clock line!
+Performs read transaction reading `num_bytes` (default is 1) from the target device identified by `address`.
+At the end master will issue Stop condition and will release the clock line!
 
-  * Arguments:
-      * `address` - i2c address of the target device
-      * `num_bytes` - number of bytes to read
-  * Returns:
-      * _None_ if failed to read data from the client (that is client did not send ACK bits) or data is Bits
-
-<br/>
-
-### **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
-
-  Performs write transaction sending `data` to the target device identified by `address`. At the end master will
-  issue Stop condition and will release the clock line.
-
-  * Arguments:
-      * `address` - i2c address of the target device
-      * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
-        If it is a string, then BitArray is constructed from that string and that is used as a payload
-      * `num_bytes` - number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
-        payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width
-  * Returns:
-      * _True_ or _False_ indicating if write succeeded, which is that client responded with ACK bits.
+* Arguments:
+    * `address` - i2c address of the target device
+    * `num_bytes` - number of bytes to read
+* Returns:
+    * _None_ if failed to read data from the client (that is client did not send ACK bits) or data is Bits
 
 <br/>
 
-### **exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
+**write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
 
-  Executes I2C commands in a single transaction and returns a named tuple `ExecResults` where first value is list
-  of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
-  Unsuccessful completion usual means that slave device responded with NACK at some point during communication
-  between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
-  from the slave.
+Performs write transaction sending `data` to the target device identified by `address`. At the end master will
+issue Stop condition and will release the clock line.
 
-<br/>
-
-### **read_register (address: int, register: RegisterAddress | int, num_bytes: int = 1, use_restart: bool = True) -> Bits | None**
-
-  Reads register from the target device identified by `address`. This is a compound operation where we
-  send first `write(address, register, num_bytes=1)` followed by `read(address, register, num_bytes)`.
-  If `use_restart` is True (default), then if device supports it i2c restart will be used between read and write
-  operations and if device does not support it them RuntimeError will be raised. if `use_restart` is False, then
-  two separate transactions will be used to perform register read operation with clock line being released between
-  them.
-
-  * Arguments:
-      * `address` - i2c address of the target device
-      * `register` - address of the register to read; if int, then it is assumed that register address is one byte
-        wide and thus valid value for this field is from 0 to 255.
-      * `num_bytes` - number of bytes to read; this should match length of the register
-      * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between read and
-        write operations
-  * Returns:
-      * _None_ if at any point during these transactions client sends NACK or actual Bits holding response data
+* Arguments:
+    * `address` - i2c address of the target device
+    * `data` - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
+      If it is a string, then BitArray is constructed from that string and that is used as a payload
+    * `num_bytes` - number of bytes to send or if None, then send all bits in `data` padded with zero bits to fit
+      payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width
+* Returns:
+    * _True_ or _False_ indicating if write succeeded, which is that client responded with ACK bits.
 
 <br/>
 
-### **write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
-  None = None, read_back: bool = False, use_restart: bool = True) -> Bits | None**
+**exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
 
-  Writes register to the target device. This is basically same as `write(...)` where first write byte is register
-  address and subsequent bytes are values to write into a register.
+Executes I2C commands in a single transaction and returns a named tuple `ExecResults` where first value is list
+of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
+Unsuccessful completion usual means that slave device responded with NACK at some point during communication
+between master and the slave. Each sub-list within the list corresponds contiguous sequence of read bytes coming
+from the slave.
 
-  * Arguments:
+<br/>
+
+**read_register (address: int, register: RegisterAddress | int, num_bytes: int = 1, use_restart: bool = True) -> Bits |
+None**
+
+Reads register from the target device identified by `address`. This is a compound operation where we
+send first `write(address, register, num_bytes=1)` followed by `read(address, register, num_bytes)`.
+If `use_restart` is True (default), then if device supports it i2c restart will be used between read and write
+operations and if device does not support it them RuntimeError will be raised. if `use_restart` is False, then
+two separate transactions will be used to perform register read operation with clock line being released between
+them.
+
+* Arguments:
+    * `address` - i2c address of the target device
+    * `register` - address of the register to read; if int, then it is assumed that register address is one byte
+      wide and thus valid value for this field is from 0 to 255.
+    * `num_bytes` - number of bytes to read; this should match length of the register
+    * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between read and
+      write operations
+* Returns:
+    * _None_ if at any point during these transactions client sends NACK or actual Bits holding response data
+
+<br/>
+
+**write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
+None = None, read_back: bool = False, use_restart: bool = True) -> Bits | None**
+
+Writes register to the target device. This is basically same as `write(...)` where first write byte is register
+address and subsequent bytes are values to write into a register.
+
+* Arguments:
     * `address` - i2c address of the target device
     * `register` - address of the register to write to; if int, then it is assumed that register address is one
       byte wide and thus valid value for this field is from 0 to 255.
@@ -79,56 +80,56 @@
       supplied to this function as `data`.
     * `use_restart` - _True_ or _False_ (default) indicating if we should try using I2C restart op between write and
       read operations. This value is applicable only of `read_back` is `True`.
-  * Returns:
+* Returns:
     * Value written into the register or None if NACK was received at any moment from the client device including
       when performing readback or any other reason that i2c driver failed. Which means that write into register
       might be a success but readback fail and thus None be returned.
 
 <br/>
 
-### **scan () -> list[int]**
+**scan () -> list[int]**
 
-  Scans for all client devices connected on this I2C bus.
+Scans for all client devices connected on this I2C bus.
 
-  * Returns
+* Returns
     * list of addresses of connected devices
 
 <br/>
 
-### **list_pullups () -> list[str]**
+**list_pullups () -> list[str]**
 
-  Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].
-
-<br/>
-
-### **set_pullup (pullup_value: str)**
-
-  Set pullup resistor value. This should be one of the strings returned by `list_pullups()` method.
+Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].
 
 <br/>
 
-### **get_pullup () -> str**
+**set_pullup (pullup_value: str)**
 
-  Returns currently active pullup resistor value in human-readable format.
-
-<br/>
-
-### **list_clk_speeds () -> list[int]**
-
-  Returns list of available configurable clock speeds in KHz.
+Set pullup resistor value. This should be one of the strings returned by `list_pullups()` method.
 
 <br/>
 
-### **get_clk_speed () -> int**
+**get_pullup () -> str**
 
-  Returns currently configured clock speed in KHz.
+Returns currently active pullup resistor value in human-readable format.
 
 <br/>
 
-### **set_clk_speed (speed: int)**
+**list_clk_speeds () -> list[int]**
 
-  Sets clock speed to `speed` value in KHz. Supplied value must be one of the returned one by
-  method `list_clk_speeds()`, if not, then RuntimeError is raised.
+Returns list of available configurable clock speeds in KHz.
+
+<br/>
+
+**get_clk_speed () -> int**
+
+Returns currently configured clock speed in KHz.
+
+<br/>
+
+**set_clk_speed (speed: int)**
+
+Sets clock speed to `speed` value in KHz. Supplied value must be one of the returned one by
+method `list_clk_speeds()`, if not, then RuntimeError is raised.
 
 ## RegisterAddress
 
