@@ -566,7 +566,7 @@
 <li>
 <p>Returns:</p>
 <ul>
-<li>None if failed to read data from the client (that is client did not send ACK bits) or data is Bits</li>
+<li><em>None</em> if failed to read data from the client (that is client did not send ACK bits) or data is Bits</li>
 </ul>
 </li>
 <li>
@@ -574,17 +574,25 @@
 </li>
 </ul>
 <p>Performs write transaction sending <code>data</code> to the target device identified by <code>address</code>. At the end master will
-  issue Stop condition and will release the clock line.
-    * Arguments:
-        * <code>address</code> - i2c address of the target device
-        * <code>data</code> - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
-          If it is a string, then BitArray is constructed from that string and that is used as a payload
-        * <code>num_bytes</code> - number of bytes to send or if None, then send all bits in <code>data</code> padded with zero bits to fit
-          payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width
-    * Returns:
-        * <em>True</em> or <em>False</em> indicating if write succeeded, which is that client responded with ACK bits.</p>
+  issue Stop condition and will release the clock line.</p>
 <ul>
-<li><strong>exec (transaction: I2CTransaction, device_address: int = -1) -&gt; ExecResults</strong></li>
+<li>Arguments:<ul>
+<li><code>address</code> - i2c address of the target device</li>
+<li><code>data</code> - array of bits to send to the target device; if int or list[int], then these are assumed to be bytes;
+    If it is a string, then BitArray is constructed from that string and that is used as a payload</li>
+<li><code>num_bytes</code> - number of bytes to send or if None, then send all bits in <code>data</code> padded with zero bits to fit
+    payload into fixed number of bytes. Raises ValueError if num_bytes is not None and is less than data width</li>
+</ul>
+</li>
+<li>
+<p>Returns:</p>
+<ul>
+<li><em>True</em> or <em>False</em> indicating if write succeeded, which is that client responded with ACK bits.</li>
+</ul>
+</li>
+<li>
+<p><strong>exec (transaction: I2CTransaction, device_address: int = -1) -&gt; ExecResults</strong></p>
+</li>
 </ul>
 <p>Executes I2C commands in a single transaction and returns a named tuple <code>ExecResults</code> where first value is list
   of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
@@ -603,47 +611,69 @@
   If <code>use_restart</code> is True (default), then if device supports it i2c restart will be used between read and write
   operations and if device does not support it them RuntimeError will be raised. if <code>use_restart</code> is False, then
   two separate transactions will be used to perform register read operation with clock line being released between
-  them.
-    * Arguments:
-        * <code>address</code> - i2c address of the target device
-        * <code>register</code> - address of the register to read; if int, then it is assumed that register address is one byte
-          wide and thus valid value for this field is from 0 to 255.
-        * <code>num_bytes</code> - number of bytes to read; this should match length of the register
-        * <code>use_restart</code> - <em>True</em> or <em>False</em> (default) indicating if we should try using I2C restart op between read and
-          write operations
-    * Returns:
-        * <em>None</em> if at any point during these transactions client sends NACK or actual Bits holding response data</p>
+  them.</p>
 <ul>
-<li><strong>write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
-  None = None, read_back: bool = False, use_restart: bool = True) -&gt; Bits | None</strong></li>
+<li>Arguments:<ul>
+<li><code>address</code> - i2c address of the target device</li>
+<li><code>register</code> - address of the register to read; if int, then it is assumed that register address is one byte
+    wide and thus valid value for this field is from 0 to 255.</li>
+<li><code>num_bytes</code> - number of bytes to read; this should match length of the register</li>
+<li><code>use_restart</code> - <em>True</em> or <em>False</em> (default) indicating if we should try using I2C restart op between read and
+    write operations</li>
+</ul>
+</li>
+<li>
+<p>Returns:</p>
+<ul>
+<li><em>None</em> if at any point during these transactions client sends NACK or actual Bits holding response data</li>
+</ul>
+</li>
+<li>
+<p><strong>write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
+  None = None, read_back: bool = False, use_restart: bool = True) -&gt; Bits | None</strong></p>
+</li>
 </ul>
 <p>Writes register to the target device. This is basically same as <code>write(...)</code> where first write byte is register
-  address and subsequent bytes are values to write into a register.
-    * Arguments:
-        * <code>address</code> - i2c address of the target device
-        * <code>register</code> - address of the register to write to; if int, then it is assumed that register address is one
-          byte wide and thus valid value for this field is from 0 to 255.
-        * <code>data</code> - array of bits to send to the target device; if int or list[int], then these are assumed to be
-          bytes. It can be empty list which means that i2c transaction will include only register address/command.
-        * <code>num_bytes</code> - number of bytes to send or if <em>None</em>, then send all bits in <code>data</code> padded with zero bits to fit
-          payload into fixed number of bytes. Raises <code>ValueError</code> if num_bytes is not None and is less than data width.
-        * <code>read_back</code> - if <em>True</em>, then register read operation will be performed at the end and its value returned.
-          Otherwise, if <em>False</em> (default), then just do write and return back to the user the same BitArray that was
-          supplied to this function as <code>data</code>.
-        * <code>use_restart</code> - <em>True</em> or <em>False</em> (default) indicating if we should try using I2C restart op between write and
-          read operations. This value is applicable only of <code>read_back</code> is <code>True</code>.
-    * Returns:
-        * Value written into the register or None if NACK was received at any moment from the client device including
-          when performing readback or any other reason that i2c driver failed. Which means that write into register
-          might be a success but readback fail and thus None be returned.</p>
+  address and subsequent bytes are values to write into a register.</p>
 <ul>
-<li><strong>scan () -&gt; list[int]</strong></li>
+<li>Arguments:<ul>
+<li><code>address</code> - i2c address of the target device</li>
+<li><code>register</code> - address of the register to write to; if int, then it is assumed that register address is one
+  byte wide and thus valid value for this field is from 0 to 255.</li>
+<li><code>data</code> - array of bits to send to the target device; if int or list[int], then these are assumed to be
+  bytes. It can be empty list which means that i2c transaction will include only register address/command.</li>
+<li><code>num_bytes</code> - number of bytes to send or if <em>None</em>, then send all bits in <code>data</code> padded with zero bits to fit
+  payload into fixed number of bytes. Raises <code>ValueError</code> if num_bytes is not None and is less than data width.</li>
+<li><code>read_back</code> - if <em>True</em>, then register read operation will be performed at the end and its value returned.
+  Otherwise, if <em>False</em> (default), then just do write and return back to the user the same BitArray that was
+  supplied to this function as <code>data</code>.</li>
+<li><code>use_restart</code> - <em>True</em> or <em>False</em> (default) indicating if we should try using I2C restart op between write and
+  read operations. This value is applicable only of <code>read_back</code> is <code>True</code>.</li>
 </ul>
-<p>Scans for all client devices connected on this I2C bus.
-    * Returns
-        * list of addresses of connected devices</p>
+</li>
+<li>
+<p>Returns:</p>
 <ul>
-<li><strong>list_pullups () -&gt; list[str]</strong></li>
+<li>Value written into the register or None if NACK was received at any moment from the client device including
+  when performing readback or any other reason that i2c driver failed. Which means that write into register
+  might be a success but readback fail and thus None be returned.</li>
+</ul>
+</li>
+<li>
+<p><strong>scan () -&gt; list[int]</strong></p>
+</li>
+</ul>
+<p>Scans for all client devices connected on this I2C bus.</p>
+<ul>
+<li>
+<p>Returns</p>
+<ul>
+<li>list of addresses of connected devices</li>
+</ul>
+</li>
+<li>
+<p><strong>list_pullups () -&gt; list[str]</strong></p>
+</li>
 </ul>
 <p>Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].</p>
 <ul>
@@ -663,10 +693,10 @@
 </ul>
 <p>Returns currently configured clock speed in KHz.</p>
 <ul>
-<li><strong>set_clk_speed (speed: int)</strong>
-  Sets clock speed to <code>speed</code> value in KHz. Supplied value must be one of the returned one by
-  method <code>list_clk_speeds()</code>, if not, then RuntimeError is raised.</li>
+<li><strong>set_clk_speed (speed: int)</strong></li>
 </ul>
+<p>Sets clock speed to <code>speed</code> value in KHz. Supplied value must be one of the returned one by
+  method <code>list_clk_speeds()</code>, if not, then RuntimeError is raised.</p>
 <h2 id="registeraddress">RegisterAddress<a class="headerlink" href="#registeraddress" title="Permanent link">&para;</a></h2>
 <p>Dataclass used as an argument to <code>I2CMaster.read_register(...)</code> and <code>.write_register(...)</code> methods.</p>
 <div class="highlight"><pre><span></span><code><span class="n">RegisterAddress</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="mh">0x07</span><span class="p">,</span> <span class="n">bus_width_in_bytes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
