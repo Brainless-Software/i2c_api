@@ -557,11 +557,11 @@
 </ul>
 <p>Performs read transaction reading <code>num_bytes</code> (default is 1) from the target device identified by <code>address</code>.
   At the end master will issue Stop condition and will release the clock line.
-    * Arguments:
-        * <code>address</code> - i2c address of the target device
-        * <code>num_bytes</code> - number of bytes to read
-    * Returns:
-        * None if failed to read data from the client (that is client did not send ACK bits) or data is Bits</p>
+  * Arguments:
+      * <code>address</code> - i2c address of the target device
+      * <code>num_bytes</code> - number of bytes to read
+  * Returns:
+      * None if failed to read data from the client (that is client did not send ACK bits) or data is Bits</p>
 <ul>
 <li><strong>write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -&gt; bool</strong></li>
 </ul>
@@ -675,7 +675,7 @@
 <h2 id="i2clogger">I2CLogger<a class="headerlink" href="#i2clogger" title="Permanent link">&para;</a></h2>
 <p>Calling <code>I2CMaster.read(...)</code>, <code>.write(...)</code>, <code>.read_register(...)</code> and <code>.write_register(...)</code> (but not <code>.exec(...)</code>)
 will generate log messages dispatched to the logger. Note that these log message might be very inaccurate since many
-dongles do not have an ability to return details of failed transaction, such as where exactly in the transaction NACK
+dongles do not have ability to return details of failed transaction, such as where exactly in the transaction NACK
 happened, just that it happened. These log messages are to be used in the advisory role only.</p>
 <h2 id="i2cmessage">I2CMessage<a class="headerlink" href="#i2cmessage" title="Permanent link">&para;</a></h2>
 <p>Grouping of all possible elements that will appear in the messages logged by <code>I2CLogger</code>. They are:</p>
