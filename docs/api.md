@@ -1,6 +1,6 @@
 ## I2CMaster
 
-* **read (address: int, num_bytes: int = 1) -> Bits | None**
+### **read (address: int, num_bytes: int = 1) -> Bits | None**
 
   Performs read transaction reading `num_bytes` (default is 1) from the target device identified by `address`.
   At the end master will issue Stop condition and will release the clock line!
@@ -13,7 +13,7 @@
 
 <br/>
 
-* **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
+### **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
 
   Performs write transaction sending `data` to the target device identified by `address`. At the end master will
   issue Stop condition and will release the clock line.
@@ -29,7 +29,7 @@
 
 <br/>
 
-* **exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
+### **exec (transaction: I2CTransaction, device_address: int = -1) -> ExecResults**
 
   Executes I2C commands in a single transaction and returns a named tuple `ExecResults` where first value is list
   of lists of read bytes if any and second value is True or False indicating if transaction completed successfully.
@@ -39,11 +39,7 @@
 
 <br/>
 
-* **read_register (
-    address: int, 
-    register: RegisterAddress | int, 
-    num_bytes: int = 1, 
-    use_restart: bool = True) -> Bits | None**
+### **read_register (address: int, register: RegisterAddress | int, num_bytes: int = 1, use_restart: bool = True) -> Bits | None**
 
   Reads register from the target device identified by `address`. This is a compound operation where we
   send first `write(address, register, num_bytes=1)` followed by `read(address, register, num_bytes)`.
@@ -64,7 +60,7 @@
 
 <br/>
 
-* **write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
+### **write_register (address: int, register: RegisterAddress | int, data: Bits | str | int | list[int], num_bytes: int |
   None = None, read_back: bool = False, use_restart: bool = True) -> Bits | None**
 
   Writes register to the target device. This is basically same as `write(...)` where first write byte is register
@@ -90,7 +86,7 @@
 
 <br/>
 
-* **scan () -> list[int]**
+### **scan () -> list[int]**
 
   Scans for all client devices connected on this I2C bus.
 
@@ -99,37 +95,37 @@
 
 <br/>
 
-* **list_pullups () -> list[str]**
+### **list_pullups () -> list[str]**
 
   Returns list of possible configurable pullup resistor values. These should be human-readable values like [20 OHm].
 
 <br/>
 
-* **set_pullup (pullup_value: str)**
+### **set_pullup (pullup_value: str)**
 
   Set pullup resistor value. This should be one of the strings returned by `list_pullups()` method.
 
 <br/>
 
-* **get_pullup () -> str**
+### **get_pullup () -> str**
 
   Returns currently active pullup resistor value in human-readable format.
 
 <br/>
 
-* **list_clk_speeds () -> list[int]**
+### **list_clk_speeds () -> list[int]**
 
   Returns list of available configurable clock speeds in KHz.
 
 <br/>
 
-* **get_clk_speed () -> int**
+### **get_clk_speed () -> int**
 
   Returns currently configured clock speed in KHz.
 
 <br/>
 
-* **set_clk_speed (speed: int)**
+### **set_clk_speed (speed: int)**
 
   Sets clock speed to `speed` value in KHz. Supplied value must be one of the returned one by
   method `list_clk_speeds()`, if not, then RuntimeError is raised.
