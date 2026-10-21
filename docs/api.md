@@ -11,7 +11,7 @@
   * Returns:
       * _None_ if failed to read data from the client (that is client did not send ACK bits) or data is Bits
 
-
+<br/><br/>
 * **write (address: int, data: Bits | str | int | list[int], num_bytes: int | None = None) -> bool**
 
   Performs write transaction sending `data` to the target device identified by `address`. At the end master will
