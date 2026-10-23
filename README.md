@@ -1,7 +1,7 @@
 # I²C API
 
 [![License - MIT](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Brainless-Software/i2c_api/blob/master/LICENSE)
-[![PyPI Latest Release](https://img.shields.io/pypi/v/i2c_api.svg)](https://pypi.org/project/i2c_api/)
+[![PyPI Latest Release](https://img.shields.io/pypi/v/i2c-api.svg)](https://pypi.org/project/i2c-api/)
 [![pytest](https://github.com/Brainless-Software/i2c_api/actions/workflows/test.yml/badge.svg)](https://github.com/Brainless-Software/i2c_api/actions/workflows/test.yml)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen)](https://brainless-software.github.io/i2c_api/)
 
