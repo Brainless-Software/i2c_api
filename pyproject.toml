@@ -39,4 +39,8 @@ dev = [
     "mkdocs-material>=9.7.7",
 ]
 
+[tool.pytest]
+minversion = "9.0"
+addopts = ["-ra", "-q", "--strict-markers"]
+testpaths = ["tests"]
 
