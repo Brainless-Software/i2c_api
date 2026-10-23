@@ -16,11 +16,11 @@ implements this API for several common USB-to-I2C dongles.
 To add this library to your project do
 
 ```shell
-uv add i2c_api
+uv add i2c-api
 ```
 
-or with `i2c_drivers`
+or with `i2c-drivers`
 
 ```shell
-uv add i2c_api i2c_drivers
+uv add i2c-api i2c-drivers
 ```
