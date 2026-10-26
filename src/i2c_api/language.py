@@ -18,7 +18,9 @@ class I2CTransaction:
     def __repr__(self) -> str:
         return ".".join(str(c) for c in self._i2c._i2c_commands)
 
-    def exec(self, master: I2CMaster, device_address: int = -1) -> ExecResults:
+    def exec(self, master: I2CMaster | None = None, device_address: int = -1) -> ExecResults:
+        master = self._i2c._i2c_master if master is None else master
+        device_address = self._i2c._default_device_address if device_address == -1 else device_address
         if master is None:
             raise ValueError("I2CMaster must be provided to execute this transaction")
 
@@ -124,8 +126,10 @@ class I2CAddress:
 
 
 class I2CTransactionBuilder:
-    def __init__(self):
+    def __init__(self, i2c_master: I2CMaster | None = None, default_device_address: int = -1):
         self._i2c_commands: list[Command] = []
+        self._i2c_master = i2c_master
+        self._default_device_address = default_device_address
 
     def start(self) -> I2CAddress:
         new_root = I2CTransactionBuilder()
