@@ -27,8 +27,12 @@ class RegisterAddress:
 
 
 class I2CMaster(ABC):
-    def __init__(self, logger: I2CLogger | None = None):
+    def __init__(self, port: str | None, logger: I2CLogger | None = None):
         self.__logger: I2CLogger = DummyI2CLogger() if logger is None else logger
+        self.port = port
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}" if self.port is None else f"{self.__class__.__name__} :: {self.port}"
 
     @staticmethod
     def __pad_up_to_bytes(data: BitArray, num_bytes: int | None) -> BitArray:
@@ -144,6 +148,10 @@ class I2CMaster(ABC):
                         "Thus, argument `address` must be provided."
                     )
         return self._exec(transaction, device_address)
+
+    @abstractmethod
+    def display_name(self) -> str:
+        pass
 
     @abstractmethod
     def _exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
@@ -312,3 +320,35 @@ class I2CMaster(ABC):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         return False
+
+
+class DummyI2CMaster(I2CMaster):
+    def display_name(self) -> str:
+        return "Demo :: DummyI2CDongle"
+
+    def _exec(self, transaction: I2CTransaction, device_address: int = -1) -> ExecResults:
+        pass
+
+    def scan(self) -> list[int]:
+        return []
+
+    def list_pullups(self) -> list[str]:
+        return ["disabled"]
+
+    def set_pullup(self, pullup_value: str) -> None:
+        pass
+
+    def get_pullup(self) -> str:
+        return "disabled"
+
+    def list_clk_speeds(self) -> list[int]:
+        return [100]
+
+    def get_clk_speed(self) -> int:
+        return 100
+
+    def set_clk_speed(self, speed: int) -> None:
+        pass
+
+    def close(self):
+        pass
