@@ -8,6 +8,10 @@ dependencies = [
     "bitstring >= 5.0.0, < 6.0.0",
 ]
 
+[project.urls]
+Homepage = "https://brainless-software.github.io/i2c_api"
+Repository = "https://github.com/Brainless-Software/i2c_api"
+
 [build-system]
 requires = ["setuptools", "wheel", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
